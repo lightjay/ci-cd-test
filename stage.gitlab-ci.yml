@@ -1,0 +1,45 @@
+variables:
+  DOCKER_REGISTRY_URL: 100648102620.dkr.ecr.us-west-2.amazonaws.com
+  APP_NAME: ci-cd-test
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "stage"'
+
+stages:
+  - test
+  - build
+  - deploy
+
+
+
+test_a:
+  stage: test
+  script:
+    - echo "This test job will start as soon as build_a finishes."
+    - echo "It will not wait for build_b, or other jobs in the build stage, to finish."
+
+docker-build:
+  # Official docker image.
+  image: docker:20.10.2
+  stage: build
+  services:
+    - docker:dind
+  before_script:
+    - aws --version
+    - docker --version
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+  script:
+    - docker build --pull -t "$DOCKER_REGISTRY/$APP_NAME:$CI_COMMIT_SHA" .
+    - docker push "$DOCKER_REGISTRY/$APP_NAME:$CI_COMMIT_SHA"
+  only:
+    - master
+    - stage
+    - main
+
+#tf_run:
+#  stage: deploy
+#  script:
+#    - echo "This job builds something else slowly."
+
+

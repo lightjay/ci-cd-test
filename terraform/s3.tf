@@ -54,7 +54,7 @@ resource "aws_s3_bucket_policy" "pipeline_artifacts" {
       "Resource": "${aws_s3_bucket.pipeline_artifacts.arn}/*",
       "Condition": {
           "Bool": {
-              "aws:SecureTransport": false
+              "aws:SecureTransport": "false"
           }
       }
     }
