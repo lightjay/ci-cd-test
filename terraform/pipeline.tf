@@ -43,7 +43,7 @@ resource "aws_codepipeline" "pipeline" {
       version          = "1"
 
       configuration = {
-        ProjectName = "test"
+        ProjectName = aws_codebuild_project.tf_runner.name
       }
     }
   }
@@ -115,10 +115,10 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
 EOF
 }
 
-//resource "aws_cloudwatch_log_group" "codepipeline" {
-//  name  = "/aws/codepipeline/${aws_codepipeline.pipeline.name}"
-//  retention_in_days = 30
-//  tags = {
-//    AppName = local.app_name
-//  }
-//}
+resource "aws_cloudwatch_log_group" "codepipeline" {
+  name  = "/aws/codepipeline/${aws_codepipeline.pipeline.name}"
+  retention_in_days = 30
+  tags = {
+    AppName = local.app_name
+  }
+}
