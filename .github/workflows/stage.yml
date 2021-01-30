@@ -12,8 +12,10 @@ jobs:
   test:
     if: github.event == 'push'
     runs-on: alpine-latest
-    run: |
-      echo "this is a test"
+    steps:
+      - name: UnitTests
+        run: |
+          echo "this is a test"
 
 
 #  docker-build:
