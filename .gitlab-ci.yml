@@ -13,20 +13,21 @@ stages:
 
 
 
-test_a:
-  stage: test
-  script:
-    - echo "This test job will start as soon as build_a finishes."
-    - echo "It will not wait for build_b, or other jobs in the build stage, to finish."
+#test_a:
+#  stage: test
+#  script:
+#    - echo "This test job will start as soon as build_a finishes."
+#    - echo "It will not wait for build_b, or other jobs in the build stage, to finish."
 
 docker-build:
-  # Official docker image.
-  image: docker:20.10.2
   stage: build
+  image:
+    name: amazon/aws-cli
+    entrypoint: [""]
   services:
     - docker:dind
-    - registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   before_script:
+    - amazon-linux-extras install docker
     - aws --version
     - docker --version
     - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
