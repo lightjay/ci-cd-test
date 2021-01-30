@@ -7,11 +7,3 @@ resource "aws_ecr_repository" "cicd-test" {
   }
 }
 
-resource "aws_iam_user" "gitlab_ci_ecr" {
-  name = "gitlab_ci_ecr_user"
-}
-
-resource "aws_iam_user_policy_attachment" "test-attach" {
-  user       = aws_iam_user.gitlab_ci_ecr.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
-}
