@@ -1,4 +1,4 @@
-FROM hub.docker.com/python
+FROM python:latest
 
 WORKDIR /
 
