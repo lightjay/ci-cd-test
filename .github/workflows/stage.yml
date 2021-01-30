@@ -1,4 +1,7 @@
 name: CICD Pipeline - Stage Env
+on:
+  pull-request-target:
+    types: [closed]
 
 env:
   DOCKER_REGISTRY_URL: 100648102620.dkr.ecr.us-west-2.amazonaws.com
