@@ -1,6 +1,7 @@
 variables:
   DOCKER_REGISTRY_URL: 100648102620.dkr.ecr.us-west-2.amazonaws.com
   APP_NAME: ci-cd-test
+  DOCKER_HOST: tcp://docker:2375
 
 workflow:
   rules:
