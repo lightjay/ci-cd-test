@@ -25,6 +25,7 @@ docker-build:
   stage: build
   services:
     - docker:dind
+    - registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   before_script:
     - aws --version
     - docker --version
