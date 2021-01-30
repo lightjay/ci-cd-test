@@ -58,7 +58,7 @@ tf_run:
     - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
     - cd terraform
     - terraform --version
-    - terraform init
+    - terraform init -backend-config=bucket=config-bucket-100648102620 -backend-config=key=tf/$APP_NAME.tfstate
   script:
     - terraform validate
     - terraform plan -out=$PLAN
