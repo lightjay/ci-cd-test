@@ -1,6 +1,6 @@
 terraform {
-  backend "remote" {
-
+  backend "s3" {
+    region = "us-west-2"
   }
 }
 
