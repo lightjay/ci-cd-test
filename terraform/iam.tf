@@ -69,7 +69,10 @@ resource "aws_iam_user_policy" "cicd" {
                 "support:*",
                 "transfer:*",
                 "workspaces:*",
-                "ecr:*"
+                "ecr:*",
+                "codestar-connections:*",
+                "codepipeline:*",
+                "codebuild:*"
             ],
             "Effect": "Allow",
             "Resource": "*"
