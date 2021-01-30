@@ -1,6 +1,6 @@
 name: CICD Pipeline - Stage Env
 on:
-  pull-request-target:
+  pull_request_target:
     types: [closed]
 
 env:
