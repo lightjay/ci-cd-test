@@ -40,9 +40,31 @@ docker-build:
     - stage
     - main
 
-#tf_run:
-#  stage: deploy
-#  script:
-#    - echo "This job builds something else slowly."
+tf_run:
+  stage: deploy
+  image:
+    name: registry.gitlab.com/gitlab-org/gitlab-build-images:terraform
+    entrypoint:
+      - '/usr/bin/env'
+      - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+  variables:
+    PLAN: plan.tfplan
+#    JSON_PLAN_FILE: tfplan.json
+  cache:
+    paths:
+      - .terraform
+      - .terraform.lock.hcl
+  before_script:
+    - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
+    - cd terraform
+    - terraform --version
+    - terraform init
+  script:
+    - terraform validate
+    - terraform plan -out=$PLAN
+#    - "terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE"
+    - terraform apply -input=false $PLAN
+
+
 
 
