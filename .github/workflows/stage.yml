@@ -1,0 +1,28 @@
+name: CICD Pipeline - Stage Env
+
+env:
+  DOCKER_REGISTRY_URL: 100648102620.dkr.ecr.us-west-2.amazonaws.com
+  APP_NAME: ci-cd-test
+  DOCKER_HOST: tcp://docker:2375
+
+jobs:
+  test:
+    if: github.event == 'push'
+    runs-on: alpine-latest
+    run: |
+      echo "this is a test"
+
+
+#  docker-build:
+#    if: github.base_ref == 'stage' && github.event == 'pull-request-target' # needs to fix
+#    needs: [test]
+#    runs-on: amazon/aws-cli
+#    steps:
+#      - name: Retrieve secret
+#        env:
+#          super_secret: ${{ secrets.SUPERSECRET }}
+#
+#  tf-run:
+#    if: contains( github.ref, 'stage') && github.event == 'pull-request' # needs to fix
+#    needs: [test, docker-build]
+#    runs-on:
