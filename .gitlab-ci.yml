@@ -30,10 +30,10 @@ docker-build:
     - amazon-linux-extras install docker
     - aws --version
     - docker --version
-    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY_URL
   script:
-    - docker build --pull -t "$DOCKER_REGISTRY/$APP_NAME:$CI_COMMIT_SHA" .
-    - docker push "$DOCKER_REGISTRY/$APP_NAME:$CI_COMMIT_SHA"
+    - docker build --pull -t "$DOCKER_REGISTRY_URL/$APP_NAME:$CI_COMMIT_SHA" .
+    - docker push "$DOCKER_REGISTRY_URL/$APP_NAME:$CI_COMMIT_SHA"
   only:
     - master
     - stage
