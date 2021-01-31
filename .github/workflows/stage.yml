@@ -7,27 +7,38 @@ on:
   push:
 
 env:
-  DOCKER_REGISTRY_URL: 100648102620.dkr.ecr.us-west-2.amazonaws.com
+  DOCKER_REGISTRY_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com
   APP_NAME: ci-cd-test
   DOCKER_HOST: tcp://docker:2375
 
 jobs:
   test:
     if: ${{github.event}} == 'push'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: UnitTests
         run: echo "this is a test"
 
 
-#  docker-build:
-#    if: github.base_ref == 'stage' && github.event == 'pull-request-target' # needs to fix
-#    needs: [test]
-#    runs-on: amazon/aws-cli
-#    steps:
-#      - name: Retrieve secret
-#        env:
-#          super_secret: ${{ secrets.SUPERSECRET }}
+  build:
+    if: ${{github.event}} == 'pull_request'
+    needs: [test]
+    runs-on: ubuntu-20.04
+    container: amazon/aws-cli
+    services:
+      docker:
+        image: docker:dind
+    steps:
+      name: Docker Build and Push
+      run: |
+        amazon-linux-extras install docker
+        aws --version
+        docker --version
+        aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY_URL
+        docker build --pull -t "$DOCKER_REGISTRY_URL/$APP_NAME:${{ github.sha }}" .
+        docker push "$DOCKER_REGISTRY_URL/$APP_NAME:${{ github.sha }}"
+
+
 #
 #  tf-run:
 #    if: contains( github.ref, 'stage') && github.event == 'pull-request' # needs to fix
