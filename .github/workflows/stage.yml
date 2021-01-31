@@ -12,46 +12,46 @@ env:
 
 
 jobs:
-  test:
-    if: ${{github.event}} == 'push'
-    runs-on: ubuntu-20.04
-    steps:
-      - name: UnitTests
-        run: echo "this is a test"
-
-
-  build:
-    if: ${{github.event}} == 'pull_request'
-    runs-on: ubuntu-20.04
-    environment: stage
-    steps:
-      - name: Checkout Latest Commit
-        uses: actions/checkout@v2
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_DEFAULT_REGION}}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Build, tag, and push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ env.APP_NAME }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#  test:
+#    if: ${{github.event}} == 'push'
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: UnitTests
+#        run: echo "this is a test"
+#
+#
+#  build:
+#    if: ${{github.event}} == 'pull_request'
+#    runs-on: ubuntu-20.04
+#    environment: stage
+#    steps:
+#      - name: Checkout Latest Commit
+#        uses: actions/checkout@v2
+#
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ${{ env.AWS_DEFAULT_REGION}}
+#
+#      - name: Login to Amazon ECR
+#        id: login-ecr
+#        uses: aws-actions/amazon-ecr-login@v1
+#
+#      - name: Build, tag, and push image to Amazon ECR
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ${{ env.APP_NAME }}
+#          IMAGE_TAG: ${{ github.sha }}
+#        run: |
+#          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
 
   deploy:
-    if: ${{github.event}} == 'pull_request'
-    needs: [build]
+    if: ${{github.event}} == 'push'  # 'pull_request'
+#    needs: [build]
     runs-on: ubuntu-20.04
     environment: stage
     defaults:
@@ -67,7 +67,6 @@ jobs:
           terraform_version: 0.14.3
 
       - name: Terraform Init
-        id: init
         with:
           TF_BUCKET: config-bucket-${{ secrets.AWS_ACCOUNT_ID }}-${{ env.AWS_DEFAULT_REGION }}
           TF_STATE_KEY: tf/${{ env.APP_NAME }}.tfstate
