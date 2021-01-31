@@ -8,6 +8,7 @@ on:
 
 env:
   APP_NAME: ci-cd-test
+  AWS-DEFAULT-REGION: us-west-2
 
 
 jobs:
@@ -32,7 +33,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+          aws-region: ${{ env.AWS_DEFAULT_REGION}}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -47,8 +48,30 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-#
-#  tf-run:
-#    if: contains( github.ref, 'stage') && github.event == 'pull-request' # needs to fix
-#    needs: [test, docker-build]
-#    runs-on:
+
+  deploy:
+    if: ${{github.event}} == 'pull_request'
+    needs: [build]
+    runs-on: ubuntu-20.04
+    environment: stage
+    defaults:
+      run:
+        working-directory: terraform/
+    steps:
+      - name: Checkout Latest Commit
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.14.3
+
+      - name: Terraform Init
+        id: init
+        with:
+          TF_BUCKET: config-bucket-${{ secrets.AWS_ACCOUNT_ID }}-${{ env.AWS_DEFAULT_REGION }}
+          TF_STATE_KEY: tf/${{ env.APP_NAME }}.tfstate
+        run: terraform init -backend-config=bucket=$TF_BUCKET -backend-config=key=$TF_STATE_KEY
+
+      - name: Terraform Apply
+        run: terraform apply -input=false
