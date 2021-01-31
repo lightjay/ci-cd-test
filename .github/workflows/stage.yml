@@ -7,12 +7,13 @@ on:
   push:
 
 env:
-  DOCKER_REGISTRY_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com
   APP_NAME: ci-cd-test
 #  DOCKER_HOST: tcp://docker:2375
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  DOCKER_REGISTRY_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+  COMMIT_HASH: ${{ github.sha }}
 
 jobs:
 #  test:
@@ -37,9 +38,10 @@ jobs:
           amazon-linux-extras install docker
           aws --version
           docker --version
+          echo "$DOCKER_REGISTRY_URL"
           aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY_URL
-          docker build --pull -t "$DOCKER_REGISTRY_URL/$APP_NAME:${{ github.sha }}" .
-          docker push "$DOCKER_REGISTRY_URL/$APP_NAME:${{ github.sha }}"
+          docker build --pull -t "$DOCKER_REGISTRY_URL/$APP_NAME:$COMMIT_HASH" .
+          docker push "$DOCKER_REGISTRY_URL/$APP_NAME:$COMMIT_HASH"
 
 
 #
