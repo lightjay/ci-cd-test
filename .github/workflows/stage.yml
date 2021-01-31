@@ -10,7 +10,6 @@ env:
   APP_NAME: ci-cd-test
   AWS-DEFAULT-REGION: us-west-2
 
-
 jobs:
 #  test:
 #    if: ${{github.event}} == 'push'
@@ -54,6 +53,10 @@ jobs:
 #    needs: [build]
     runs-on: ubuntu-20.04
     environment: stage
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION}}
     defaults:
       run:
         working-directory: terraform/
