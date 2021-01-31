@@ -8,7 +8,7 @@ on:
 
 env:
   APP_NAME: ci-cd-test
-  AWS-DEFAULT-REGION: us-west-2
+  AWS_DEFAULT_REGION: us-west-2
 
 jobs:
 #  test:
