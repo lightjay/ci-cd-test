@@ -8,8 +8,7 @@ on:
 
 env:
   APP_NAME: ci-cd-test
-  AWS-DEFAULT-REGION: us-west-2
-
+  AWS_DEFAULT_REGION: us-west-2
 
 jobs:
   test:
@@ -54,6 +53,9 @@ jobs:
     needs: [build]
     runs-on: ubuntu-20.04
     environment: stage
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     defaults:
       run:
         working-directory: terraform/
@@ -67,11 +69,10 @@ jobs:
           terraform_version: 0.14.3
 
       - name: Terraform Init
-        id: init
-        with:
+        run: terraform init -backend-config=bucket=$TF_BUCKET -backend-config=key=$TF_STATE_KEY
+        env:
           TF_BUCKET: config-bucket-${{ secrets.AWS_ACCOUNT_ID }}-${{ env.AWS_DEFAULT_REGION }}
           TF_STATE_KEY: tf/${{ env.APP_NAME }}.tfstate
-        run: terraform init -backend-config=bucket=$TF_BUCKET -backend-config=key=$TF_STATE_KEY
 
       - name: Terraform Apply
         run: terraform apply -input=false
