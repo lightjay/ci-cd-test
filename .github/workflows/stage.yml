@@ -29,14 +29,14 @@ jobs:
       docker:
         image: docker:dind
     steps:
-      name: Docker Build and Push
-      run: |
-        amazon-linux-extras install docker
-        aws --version
-        docker --version
-        aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY_URL
-        docker build --pull -t "$DOCKER_REGISTRY_URL/$APP_NAME:${{ github.sha }}" .
-        docker push "$DOCKER_REGISTRY_URL/$APP_NAME:${{ github.sha }}"
+      - name: Docker Build and Push
+        run: |
+          amazon-linux-extras install docker
+          aws --version
+          docker --version
+          aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY_URL
+          docker build --pull -t "$DOCKER_REGISTRY_URL/$APP_NAME:${{ github.sha }}" .
+          docker push "$DOCKER_REGISTRY_URL/$APP_NAME:${{ github.sha }}"
 
 
 #
