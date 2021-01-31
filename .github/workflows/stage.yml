@@ -22,7 +22,7 @@ jobs:
 
   build:
     if: ${{github.event}} == 'push'  # 'pull_request'
-    needs: [test]
+#    needs: [test]
     runs-on: ubuntu-20.04
     container: amazon/aws-cli
     services:
