@@ -9,19 +9,19 @@ on:
 env:
   DOCKER_REGISTRY_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com
   APP_NAME: ci-cd-test
-  DOCKER_HOST: tcp://docker:2375
+#  DOCKER_HOST: tcp://docker:2375
 
 jobs:
-  test:
-    if: ${{github.event}} == 'push'
-    runs-on: ubuntu-20.04
-    steps:
-      - name: UnitTests
-        run: echo "this is a test"
+#  test:
+#    if: ${{github.event}} == 'push'
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: UnitTests
+#        run: echo "this is a test"
 
 
   build:
-    if: ${{github.event}} == 'pull_request'
+    if: ${{github.event}} == 'push'  # 'pull_request'
     needs: [test]
     runs-on: ubuntu-20.04
     container: amazon/aws-cli
