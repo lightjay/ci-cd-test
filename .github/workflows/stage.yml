@@ -54,9 +54,6 @@ jobs:
 #    needs: [build]
     runs-on: ubuntu-20.04
     environment: stage
-    env:
-      TF_BUCKET: config-bucket-${{ secrets.AWS_ACCOUNT_ID }}-${{ env.AWS_DEFAULT_REGION }}
-      TF_STATE_KEY: tf/${{ env.APP_NAME }}.tfstate
     defaults:
       run:
         working-directory: terraform/
@@ -71,6 +68,9 @@ jobs:
 
       - name: Terraform Init
         run: terraform init -backend-config=bucket=$TF_BUCKET -backend-config=key=$TF_STATE_KEY
+        env:
+          TF_BUCKET: config-bucket-${{ secrets.AWS_ACCOUNT_ID }}-${{ env.AWS_DEFAULT_REGION }}
+          TF_STATE_KEY: tf/${{ env.APP_NAME }}.tfstate
 
       - name: Terraform Apply
         run: terraform apply -input=false
