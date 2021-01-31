@@ -1,10 +1,11 @@
-resource "aws_iam_user" "gitlab_ci_ecr" {
-  name = "gitlab_ci_ecr_user"
+resource "aws_iam_user" "cicd" {
+  name = "CICD_Workflow_User"
+  force_destroy = true
 }
 
 resource "aws_iam_user_policy" "cicd" {
   name = "CICDPipelineAccess"
-  user = aws_iam_user.gitlab_ci_ecr.name
+  user = aws_iam_user.cicd.name
 
   policy = <<EOF
 {

@@ -27,7 +27,7 @@ jobs:
     services:
       docker:
         image: docker:dind
-    environment: prod
+    environment: stage
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -40,7 +40,6 @@ jobs:
           amazon-linux-extras install docker
           aws --version
           docker --version
-          echo "$DOCKER_REGISTRY_URL"
           aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY_URL
           docker build --pull -t "$DOCKER_REGISTRY_URL/$APP_NAME:$COMMIT_HASH" .
           docker push "$DOCKER_REGISTRY_URL/$APP_NAME:$COMMIT_HASH"
